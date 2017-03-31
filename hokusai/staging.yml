@@ -1,0 +1,60 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: frequency
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: frequency
+      name: frequency
+      namespace: default
+    spec:
+      containers:
+      - env:
+        - name: MIX_ENV
+          value: prod
+        - name: RABBITMQ_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: frequency-config
+              key: RABBITMQ_HOST
+        - name: RABBITMQ_USER
+          valueFrom:
+            configMapKeyRef:
+              name: frequency-config
+              key: RABBITMQ_USER
+        - name: RABBITMQ_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: frequency-config
+              key: RABBITMQ_PORT
+        - name: RABBITMQ_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: frequency-secrets
+              key: RABBITMQ_PASSWORD
+        image: 585031190124.dkr.ecr.us-east-1.amazonaws.com/frequency:staging
+        imagePullPolicy: Always
+        name: frequency
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: frequency
+  name: frequency
+  namespace: default
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 4000
+  selector:
+    app: frequency
+  sessionAffinity: None
+  type: LoadBalancer

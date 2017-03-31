@@ -3,7 +3,7 @@ alias ExAws.S3
 defmodule Receiver do 
   def wait_for_messages do
     channel_name = "tracks"
-    {:ok, connection} = AMQP.Connection.open
+    {:ok, connection} = AMQP.Connection.open(Application.get_env(:frequency, :rabbitmq))
     {:ok, channel} = AMQP.Channel.open(connection)
     AMQP.Queue.declare(channel, channel_name)
     AMQP.Basic.consume(channel, channel_name, nil, no_ack: true)

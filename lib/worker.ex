@@ -15,7 +15,8 @@ defmodule Frequency.Worker do
   ## Server Callbacks
 
   def init(:ok) do
-    {:ok, connection} = AMQP.Connection.open
+
+    {:ok, connection} = AMQP.Connection.open(Application.get_env(:frequency, :rabbitmq))
     {:ok, channel} = AMQP.Channel.open(connection)
     AMQP.Queue.declare(channel, "tracks")
     {:ok, %{channel: channel, connection: connection} }

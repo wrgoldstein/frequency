@@ -1,0 +1,21 @@
+---
+version: '2'
+services:
+  frequency:
+    command: mix run
+    environment:
+    - MIX_ENV=dev
+    - RABBITMQ_HOST=rabbitmq
+    - RABBITMQ_USER=guest
+    - RABBITMQ_PASSWORD=guest
+    - RABBITMQ_PORT=5672
+    extends:
+      file: common.yml
+      service: frequency
+    ports:
+    - 80:80
+  rabbitmq:
+      image: rabbitmq:3.6-management
+      ports:
+        - 5672:5672
+        - 15672:15672
